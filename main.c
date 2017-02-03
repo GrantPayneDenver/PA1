@@ -3,18 +3,16 @@
 #include <string.h>
 #define RAYSIZE 100
 
-
-
 // TODO make char dynamic
 typedef struct char_vector {
     char* data; //
-    uint limit; // Total size of the vector
-    uint current; //Number of vectors in it at present
+    unsigned int limit; // Total size of the vector
+    unsigned int current; //Number of vectors in it at present
 } char_vec;
 
 //forward declarations
 struct tnode {
-    char strName[RAYSIZE];
+    char* strName;
     int strQty;
     struct tnode* lChild;
     struct tnode* rChild;
@@ -38,8 +36,9 @@ int main() {
     
     // PRINT TREE
     print(root);
-    
-    //clearTree(root);
+
+    //Frees up all memory from tree before exiting program
+    clearTree(root);
     root = NULL;
     
     return 0;
@@ -69,10 +68,11 @@ void readin(FILE *f, struct tnode** root) {
 // Postcondition: String is inserted into tree or incremented if it already exists
 // Returns: Nothing.
 //-----------------------------------
-void insert(struct tnode** root, char Str1[RAYSIZE]){
+void insert(struct tnode** root, char* Str1){
     //checks to see if tree is empty, if so sticks str1 as the root
     if (*root == NULL){
         struct tnode* tempNode = (struct tnode*) malloc(sizeof(struct tnode));
+        tempNode->strName = (char*) malloc(strlen(Str1) * sizeof(char));
         strcpy(tempNode->strName, Str1);
         tempNode->strQty = 1;
         tempNode->lChild = NULL;
@@ -104,6 +104,7 @@ void insert(struct tnode** root, char Str1[RAYSIZE]){
     //when loop breaks new node will attach to previous node
     //creates a new node
     struct tnode* tempNode = (struct tnode*) malloc(sizeof(struct tnode));
+    tempNode->strName = (char*) malloc(strlen(Str1) * sizeof(char));
     strcpy(tempNode->strName, Str1);
     tempNode->strQty = 1;
     tempNode->lChild = NULL;
@@ -152,5 +153,6 @@ void clearTree(struct tnode* root){
         clearTree(root->rChild);
     }
     // if all children have been freed, then free node
+    free(root->strName);
     free(root);
 }// end clear
